@@ -1,0 +1,8 @@
+-r requirements.txt
+
+pre-commit
+black
+flake8
+pytest
+pytest-asyncio
+pytest-cov
