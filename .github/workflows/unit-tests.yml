@@ -30,7 +30,7 @@ jobs:
         # This path is specific to Ubuntu
         path: ~/.cache/pip
         # Look to see if there is a cache hit for the corresponding requirements file
-        key: ${{ runner.os }}-pip-${{ hashFiles('*requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements*.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
           ${{ runner.os }}-
@@ -38,7 +38,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip wheel setuptools
-        pip install -r dev-requirements.txt
+        pip install -r requirements-tests.txt
 
     - name: Run tests
       run: |
