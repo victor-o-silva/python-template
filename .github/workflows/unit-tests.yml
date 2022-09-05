@@ -1,46 +1,31 @@
-name: Run unit tests
+name: unit-tests
 
 on:
   push:
-    branches:
-      - '**'
+    branches: ["main"]
   pull_request:
-    branches:
-      - '**'
+    branches: ["main"]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ 3.9 ]
-
+  unit-tests:
+    name: "Unit tests"
+    runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.11.0-rc.1'
+          cache: 'pip'
 
-    - name: Cache pip
-      uses: actions/cache@v2
-      with:
-        # This path is specific to Ubuntu
-        path: ~/.cache/pip
-        # Look to see if there is a cache hit for the corresponding requirements file
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements*.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-          ${{ runner.os }}-
+      - name: "Remove Postgres-related requirements"
+        run: sed -i -E '/psycopg2|asyncpg/d' requirements/base.txt
 
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip wheel setuptools
-        pip install -r requirements-tests.txt
+      - name: "Install dependencies"
+        run: pip install -r requirements/base.txt && pip install -r requirements/unit-tests.txt
 
-    - name: Run tests
-      run: |
-        chmod +x run_tests.sh
-        ./run_tests.sh
+      - name: "Check libs with safety"
+        run: make safety-check
+
+      - name: "Execute unit tests"
+        run: make test-coverage

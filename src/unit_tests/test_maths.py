@@ -1,6 +1,6 @@
 import pytest
 
-from app.maths import get_semester
+from src.my_awesome_app.maths import get_semester
 
 
 @pytest.mark.parametrize(
@@ -12,6 +12,12 @@ from app.maths import get_semester
         (4, 1),
         (5, 1),
         (6, 1),
+        (7, 2),
+        (8, 2),
+        (9, 2),
+        (10, 2),
+        (11, 2),
+        (12, 2),
     ],
 )
 def test_get_semester(month_value: int, expected_semester: int):

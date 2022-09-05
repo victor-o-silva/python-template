@@ -1,6 +1,6 @@
 [flake8]
 filename =
-    app/**.py,
+    my_awesome_app/**.py,
     unit_tests/**.py,
 
 max-complexity = 5

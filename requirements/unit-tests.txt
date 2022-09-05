@@ -1,8 +1,11 @@
--r requirements.txt
+-r base.txt
 
+aiosqlite
 black
 flake8
 safety
 pytest
 pytest-asyncio
 pytest-cov
+pytest-httpx
+pytest-mock
