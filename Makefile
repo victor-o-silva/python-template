@@ -18,6 +18,8 @@ install-dev-requirements: clean
 safety-check: clean
 	safety check
 
-
 test-coverage: clean
 	py.test -c ./src/unit_tests/pytest.ini ./src/unit_tests/
+
+run-api: clean
+	@uvicorn my_awesome_app.entrypoints.http_api.main:app --reload
