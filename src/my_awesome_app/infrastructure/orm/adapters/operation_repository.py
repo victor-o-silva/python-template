@@ -16,6 +16,15 @@ class SqlAlchemyOperationRepository(IOperationRepository):
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
 
+    async def get_operation(self, operation_execution_id: int, *, for_update: bool = False) -> OperationExecution:
+        statement = select(OperationModel).filter(OperationModel.id == operation_execution_id)
+        if for_update:
+            statement = statement.with_for_update()
+
+        result = await self.db_session.execute(statement)
+        model = result.scalar_one()
+        return self._create_operation_from_model(model)
+
     async def list_operations(self, *, limit: int, offset: int) -> GenericPage[OperationExecution]:
         statement = select(OperationModel)
 
@@ -26,16 +35,7 @@ class SqlAlchemyOperationRepository(IOperationRepository):
         rows = [r[0] for r in (await self.db_session.execute(statement)).fetchall()]
 
         return GenericPage[OperationExecution](
-            data=[
-                OperationExecution(
-                    id=row.id,
-                    a=row.a,
-                    operation=row.operation,
-                    b=row.b,
-                    result=row.result,
-                )
-                for row in rows
-            ],
+            data=[self._create_operation_from_model(row) for row in rows],
             total_items=total_count,
         )
 
@@ -44,7 +44,17 @@ class SqlAlchemyOperationRepository(IOperationRepository):
             a=operation_execution.a,
             operation=operation_execution.operation,
             b=operation_execution.b,
-            result=operation_execution.result
+            result=operation_execution.result,
         )
         self.db_session.add(model)
         await self.db_session.flush()
+        operation_execution.id = model.id
+
+    def _create_operation_from_model(self, model: OperationModel) -> OperationExecution:
+        return OperationExecution(
+            id=model.id,
+            a=model.a,
+            operation=model.operation,
+            b=model.b,
+            result=model.result,
+        )

@@ -1,9 +1,13 @@
 from __future__ import annotations
+
 from my_awesome_app.business.entities import OperationExecution
 from my_awesome_app.business.utils import GenericPage
 
 
 class IOperationRepository:
+    async def get_operation(self, operation_execution_id: int, *, for_update: bool = False) -> OperationExecution:
+        raise NotImplementedError
+
     async def list_operations(self, *, limit: int, offset: int) -> GenericPage[OperationExecution]:
         raise NotImplementedError
 
