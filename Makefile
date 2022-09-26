@@ -23,3 +23,9 @@ test-coverage: clean
 
 run-api: clean
 	@uvicorn my_awesome_app.entrypoints.http_api.main:app --reload
+
+make-migrations:
+	PYTHONPATH=$(shell pwd)/src/ alembic --config alembic_migrations/alembic.ini revision --autogenerate
+
+migrate:
+	PYTHONPATH=$(shell pwd)/src/ alembic --config alembic_migrations/alembic.ini upgrade head

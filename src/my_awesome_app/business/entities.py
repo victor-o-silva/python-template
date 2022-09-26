@@ -10,6 +10,7 @@ from my_awesome_app.business.value_objects import Operation
 
 @dataclass(kw_only=True)
 class OperationExecution:
+    id: int | None
     a: Decimal
     operation: Operation
     b: Decimal
@@ -38,4 +39,4 @@ class OperationExecution:
                 raise
             result = Decimal("0")
 
-        return OperationExecution(a=a, operation=operation, b=b, result=result)
+        return OperationExecution(id=None, a=a, operation=operation, b=b, result=result)
